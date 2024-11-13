@@ -8,4 +8,4 @@
 3. Cài các thư viện: npm i mongoose express jsonwebtoken bcryptjs dotenv nodemon
 4. Chạy dự án: npm run dev
 5. Link test API bằng postman: https://www.postman.com/hoanghaaii/practice1/collection/ups2i5f/user?action=share&creator=34266281
-
+6. End
