@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllUserProfile, getUserProfileById, login, registerUser, updateBasicProfile, updateProfessionalProfile, uploadAvatar } from '../controllers/user.controller.js'
+import { changePassword, getAllUserProfile, getUserProfileById, login, registerUser, updateBasicProfile, updateProfessionalProfile, uploadAvatar } from '../controllers/user.controller.js'
 import { verifyToken } from '../middleware/verifyToken.js'
 import { uploadAvatarMiddleWare } from '../../aws/aws.js'
 
@@ -12,5 +12,6 @@ router.put('/update-pro/:id', updateProfessionalProfile)
 router.post('/register', registerUser)
 router.post('/login', login)
 router.post('/upload-avatar/:id', uploadAvatarMiddleWare, uploadAvatar)
+router.post('/change-password/:id', changePassword)
 
 export default router

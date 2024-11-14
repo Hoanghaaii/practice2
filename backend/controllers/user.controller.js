@@ -11,7 +11,7 @@ export const registerUser = async (req, res)=>{
         }
         const isExistedUser = await User.findOne({email}) //kiểm tra xem đã tồn tại user hay chưa, nếu rồi thì return lỗi
         if(isExistedUser){
-            return res.status(400).json({message: "Username is existed! "})
+            return res.status(400).json({message: "User is existed! (Email is used) "})
         }
         const hashedPassword = await bcrypt.hash(password, 10) //mã hoá password bằng bcrypt
         const user = new User({
@@ -108,26 +108,27 @@ export const updateBasicProfile = async (req, res)=>{
 export const uploadAvatar = async (req, res)=>{
     try {
         const userId = req.params.id
-    if(!userId){
-        return res.status(400).json("Userid is not provided!")
-    }
-    const user = await User.findById(userId)
-    if(!user){
-        return res.status(400).json({message: "User not found!"})
-    }
-    if(!req.file){
-        return res.status(400).json({message: "Avatar image not found!"})
-    }
-    if(req.file){
-        const uploadResult = await postFile(req, 'avatar');
-        console.log(uploadResult)
-        if(!uploadResult.success){
-            return res.status(500).json({message: "Failed to upload avatar!"})
+        if(!userId){
+            return res.status(400).json("Userid is not provided!")
         }
-        user.avatar  = uploadResult.fileUrl
-    }
-    await user.save()
-    return res.status(200).json({message: "Upload image successfully!"})
+        const user = await User.findById(userId)
+        if(!user){
+            return res.status(400).json({message: "User not found!"})
+        }
+        if(!req.file){
+            return res.status(400).json({message: "Avatar image not found!"})
+        }
+        if(req.file){
+            const uploadResult = await postFile(req, 'avatar');
+            console.log(uploadResult)
+            if(!uploadResult.success){
+                return res.status(500).json({message: "Failed to upload avatar!"})
+            }
+            user.avatar  = uploadResult.fileUrl
+        }
+        const avatarUrl = user.avatar
+        await user.save()
+        return res.status(200).json({message: "Upload image successfully!" , avatarUrl})
     } catch (error) {
         res.status(500).json({message: "Server error", error: error.message})
     }
@@ -157,3 +158,35 @@ export const updateProfessionalProfile = async (req, res)=>{
     const updateUser = await User.findByIdAndUpdate(userId, updateData, {new: true})
     res.status(200).json({message: "Update professional profile successfully!", updateUser})
 }
+
+export const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const userId = req.params.id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "UserID is not provided!" });
+        }
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: "New password and old password must be provided!" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found!" });
+        }
+
+        const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+        if (!isValidPassword) {
+            return res.status(400).json({ message: "Old password is incorrect!" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({ message: "Password changed successfully!" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
