@@ -6,8 +6,8 @@
   JWT_SECRET = practice1
   NODE_ENV = development
   AWS_REGION=ap-southeast-2
-  AWS_ACCESS_KEY_ID=//
-  AWS_SECRET_ACCESS_KEY= grrPsfBKk1x/dajD6kh110nbsLW63lcfb3E9140/
+  AWS_ACCESS_KEY_ID= ...
+  AWS_SECRET_ACCESS_KEY= ...
   AWS_BUCKET_NAME = 2handstoreimg
 3. Cài các thư viện: npm i mongoose express jsonwebtoken bcryptjs dotenv nodemon aws-sdk/client-s3 cookie-parser crypto multer
 4. Chạy dự án: npm run dev
